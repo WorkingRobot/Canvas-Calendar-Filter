@@ -1,0 +1,1 @@
+wt --title Sanic sanic server.app --debug -r -R ./static/ ; split-pane --suppressApplicationTitle --title Tailwind pwsh -c npx.ps1 tailwindcss -i ./tailwind.css -o ./static/index.css --watch ; move-focus first

@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "color": "^4.2.3",
+    "tailwind-scrollbar": "^3.1.0"
+  }
+}

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="dark:[color-scheme:dark]">
+
+<head>
+    <title>Canvas Calendar Filter</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/index.css">
+
+    <script defer>
+        document.addEventListener("DOMContentLoaded", () => {
+            const calendarUrl = document.getElementById('calendar-url');
+            const genUrl = document.getElementById('gen-url');
+            const genUrlContainer = document.getElementById('gen-url-container');
+            const getUrl = document.getElementById('get-url');
+            const copyUrl = document.getElementById('copy-url');
+            const openUrl = document.getElementById('open-url');
+
+            calendarUrl.addEventListener('input', () => {
+                getUrl.disabled = !calendarUrl.checkValidity() || calendarUrl.value === '';
+            });
+            genUrl.addEventListener('focus', () => genUrl.select());
+            getUrl.addEventListener('click', () => {
+                if (!calendarUrl.checkValidity()) {
+                    return;
+                }
+                const url = calendarUrl.value;
+                const filt = document.querySelector('input[name="filter-type"]:checked').value;
+                const urlObj = new URL(url);
+                const newUrl = `${window.location.origin}/feeds/${filt}/${urlObj.hostname}/${urlObj.pathname.split('/').pop()}`;
+                genUrl.value = newUrl;
+                genUrlContainer.classList.remove('hidden');
+            });
+            copyUrl.addEventListener('click', () => {
+                genUrl.select();
+                document.execCommand('copy');
+            });
+            openUrl.addEventListener('click', () => {
+                window.open(genUrl.value);
+            });
+        });
+    </script>
+</head>
+
+<body class="bg-stone-300 dark:bg-stone-900 text-stone-950 dark:text-stone-300 min-h-screen flex flex-col">
+    <div class="container max-w-xl mx-auto lg:p-0 lg:pt-12 pt-12">
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-4 bg-stone-400 dark:bg-stone-800 rounded-lg p-5 pt-3">
+                <h1 class="text-4xl text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.17 127.21"
+                        class="align-middle inline-block h-10 mr-1 fill-canvas" aria-label="Canvas">
+                        <title>Canvas</title>
+                        <g id="Layer_2" data-name="Layer 2">
+                            <g id="Layer_1-2" data-name="Layer 1">
+                                <path
+                                    d="M18.45,63.47A18.4,18.4,0,0,0,2.31,45.23a73.13,73.13,0,0,0,0,36.47A18.38,18.38,0,0,0,18.45,63.47" />
+                                <path d="M29.13,57.7a5.77,5.77,0,1,0,5.77,5.77,5.77,5.77,0,0,0-5.77-5.77" />
+                                <path
+                                    d="M108.72,63.47A18.38,18.38,0,0,0,124.86,81.7a73.13,73.13,0,0,0,0-36.47,18.4,18.4,0,0,0-16.14,18.24" />
+                                <path d="M98,57.7a5.77,5.77,0,1,0,5.76,5.77A5.77,5.77,0,0,0,98,57.7" />
+                                <path
+                                    d="M63.46,108.77A18.39,18.39,0,0,0,45.23,124.9a73.13,73.13,0,0,0,36.47,0,18.38,18.38,0,0,0-18.24-16.13" />
+                                <path d="M63.47,92.31a5.77,5.77,0,1,0,5.76,5.77,5.77,5.77,0,0,0-5.76-5.77" />
+                                <path
+                                    d="M63.47,18.44A18.37,18.37,0,0,0,81.7,2.31a73.13,73.13,0,0,0-36.47,0A18.39,18.39,0,0,0,63.47,18.44" />
+                                <path d="M63.47,23.37a5.77,5.77,0,1,0,5.76,5.76,5.76,5.76,0,0,0-5.76-5.76" />
+                                <path
+                                    d="M95.44,95.44a18.4,18.4,0,0,0-1.5,24.29,73,73,0,0,0,25.78-25.79,18.39,18.39,0,0,0-24.28,1.5" />
+                                <path d="M83.8,83.8a5.77,5.77,0,1,0,8.16,0,5.78,5.78,0,0,0-8.16,0" />
+                                <path
+                                    d="M31.59,31.59a18.36,18.36,0,0,0,1.5-24.28A72.93,72.93,0,0,0,7.31,33.09a18.36,18.36,0,0,0,24.28-1.5" />
+                                <path d="M35.07,35.08a5.77,5.77,0,1,0,8.16,0,5.78,5.78,0,0,0-8.16,0" />
+                                <path class="cls-1"
+                                    d="M95.4,31.53A18.39,18.39,0,0,0,119.69,33,72.88,72.88,0,0,0,93.9,7.25a18.39,18.39,0,0,0,1.5,24.28" />
+                                <path d="M91.92,43.17a5.76,5.76,0,1,0-8.15,0,5.76,5.76,0,0,0,8.15,0" />
+                                <path class="cls-1"
+                                    d="M31.56,95.37a18.39,18.39,0,0,0-24.28-1.5,73,73,0,0,0,25.78,25.79,18.38,18.38,0,0,0-1.5-24.29" />
+                                <path d="M35,83.73a5.77,5.77,0,1,0,8.16,0,5.79,5.79,0,0,0-8.16,0" />
+                            </g>
+                        </g>
+                    </svg>
+                    <span class="align-middle leading-none">Calendar Filter</span>
+                </h1>
+                <div class="text-justify">
+                    Filters out unneeded events and assignments from your Canvas calendar feed, so you can use it in
+                    your
+                    own
+                    calendar app without being flooded with assignments or events you don't need to turn in any work
+                    for.
+                </div>
+            </div>
+            <div class="group flex flex-col bg-stone-400 dark:bg-stone-800 rounded-lg p-5 pt-3">
+                <div class="flex">
+                    <label for="calendar-url" class="flex-1 text-xl leading-loose">Calendar URL</label>
+                    <div
+                        class="self-center text-lg leading-none float-end text-red-700 dark:text-red-500 invisible group-has-[:invalid]:visible">
+                        Invalid URL
+                    </div>
+                </div>
+                <input type="url" name="calendar-url" id="calendar-url"
+                    placeholder="https://school.instructure.com/feeds/calendars/user_...ics"
+                    class="peer bg-stone-300 dark:bg-stone-700 border border-gray-300 dark:border-gray-500 mt-2 placeholder:italic invalid:outline outline-1 invalid:border-transparent invalid:outline-red-700 rounded-md p-1">
+            </div>
+            <div class="flex flex-col bg-stone-400 dark:bg-stone-800 rounded-lg p-5 pt-3">
+                <label class="text-xl leading-loose">Filter</label>
+                <fieldset class="mt-2">
+                    <legend class="sr-only">Filter Type</legend>
+                    <div>
+                        <div class="flex items-center">
+                            <input class="w-4 h-4" name="filter-type" type="radio" value="assignments" id="assignments"
+                                checked>
+                            <label class="leading-normal block ml-3 font-medium" for="assignments" class="ml-2">All
+                                Assignments</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input class="w-4 h-4" name="filter-type" type="radio" value="turn-in-assignments"
+                                id="turn-in-assignments">
+                            <label class="leading-normal block ml-3 font-medium" for="turn-in-assignments"
+                                class="ml-2">Turn-In Assignments</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input class="w-4 h-4" name="filter-type" type="radio" value="other-assignments"
+                                id="other-assignments">
+                            <label class="leading-normal block ml-3 font-medium" for="other-assignments"
+                                class="ml-2">Other
+                                Assignments</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input class="w-4 h-4" name="filter-type" type="radio" value="calendar-events"
+                                id="calendar-events">
+                            <label class="leading-normal block ml-3 font-medium" for="calendar-events"
+                                class="ml-2">Calendar
+                                Events</label>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <button
+                class="bg-canvas active:bg-canvas-darker disabled:bg-canvas-darker transition text-white rounded-lg font-semibold text-xl p-3 self-center"
+                id="get-url" disabled>Get
+                URL</button>
+            <div class="hidden flex flex-col bg-stone-400 dark:bg-stone-800 rounded-lg p-5 pt-3" id="gen-url-container">
+                <label class="text-xl leading-loose">Filtered URL</label>
+                <div class="flex flex-row gap-2 mt-2">
+                    <input type="url" readonly
+                        class="bg-stone-300 dark:bg-stone-700 border border-gray-300 dark:border-gray-500 rounded-md p-1 flex-1"
+                        id="gen-url">
+                    <button
+                        class="active:bg-stone-400 active:dark:bg-stone-700 transition duration-50 bg-stone-300 dark:bg-stone-600 fill-current rounded-md p-0 m-0 w-8 h-8 flex justify-items-center items-center"
+                        id="copy-url" title="Copy URL">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
+                            class="w-1/2 mx-auto"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                            <title>Copy</title>
+                            <path
+                                d="M208 0H332.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V336c0 26.5-21.5 48-48 48H208c-26.5 0-48-21.5-48-48V48c0-26.5 21.5-48 48-48zM48 128h80v64H64V448H256V416h64v48c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V176c0-26.5 21.5-48 48-48z" />
+                        </svg>
+                    </button>
+                    <button
+                        class="active:bg-stone-400 active:dark:bg-stone-700 transition duration-50 bg-stone-300 dark:bg-stone-600 fill-current rounded-md p-0 m-0 w-8 h-8 flex justify-items-center items-center"
+                        id="open-url" title="Open URL">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                            class="w-1/2 mx-auto"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                            <title>Open</title>
+                            <path
+                                d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="mt-auto self-end">
+        <div class="mt-4 bg-stone-400 dark:bg-stone-800 rounded-tl-lg p-2 px-4 flex flex-col text-center">
+            <a href="https://github.com/WorkingRobot/Canvas-Calendar-Filter">
+                <span class="leading-none align-middle">See this on </span>
+                <svg class="fill-current w-4 inline-block" role="img" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24">
+                    <title>GitHub</title>
+                    <path
+                        d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12">
+                    </path>
+                </svg>
+            </a>
+            <div>Made by <a href="https://camora.dev" class="underline">Asriel</a></div>
+        </div>
+    </footer>
+</body>
+
+</html>
