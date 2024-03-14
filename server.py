@@ -1,15 +1,16 @@
 import httpx
 import icalendar
 import re
+import pytz
 
 from datetime import date
 from datetime import datetime
-from datetime import time
-from datetime import timedelta
 
 from sanic import Sanic
 from sanic import response
 from sanic import exceptions
+
+from urllib.parse import unquote
 
 app = Sanic("Canvas-Calendar-Filter")
 app.config.OAS = False
@@ -35,16 +36,17 @@ def is_valid_hostname(hostname: str) -> bool:
     # Check that all labels match that pattern.
     return all(fqdn.match(label) for label in labels)
 
-def get_datetime(ddd) -> datetime:
+def get_due_date(ddd: icalendar.vDDDTypes, tz: pytz.BaseTzInfo) -> datetime:
     dt = ddd.dt
     if isinstance(dt, datetime):
         return dt
-    if isinstance(dt, date):
-        return datetime.combine(dt, datetime.min.time())
-    if isinstance(dt, timedelta):
-        raise ValueError(f"Can't convert timedelta ({dt})")
-    if isinstance(dt, time):
-        raise ValueError(f"Can't convert time ({dt})")
+    if isinstance(dt, date): # 11:59 PM
+        ret = datetime.combine(dt, datetime.max.time().replace(second = 0, microsecond = 0))
+        ret = tz.localize(ret)
+        ret = tz.normalize(ret)
+        ret = ret.astimezone(pytz.utc)
+        return ret
+    raise ValueError(f"Can't convert {dt} ({type(dt)}).")
 
 def filter_hostname(hostname: str) -> bool:
     if hostname.endswith('.edu'):
@@ -69,16 +71,24 @@ CALENDAR_FILTERS = {
     'turn-in-assignments': filter_intersect(filter_uid_startswith('event-assignment'), filter_not(filter_uid_startswith('event-assignment-override')))
 }
 
-@app.get('/feeds/<filt:slug>/<hostname:str>/<file=str:ext=ics>')
-async def calendar(request, filt: str, hostname: str, file: str, ext: str):
+@app.get('/feeds/<filt:slug>/<tz_name:str>/<hostname:str>/<file=str:ext=ics>')
+async def calendar(request, filt: str, tz_name: str, hostname: str, file: str, ext: str):
     filt = filt.lower()
     if filt not in CALENDAR_FILTERS:
         raise exceptions.BadRequest(f"Invalid filter. Must be one of: {', '.join(CALENDAR_FILTERS.keys())}.", context = { "filter": filt })
+    
+    tz_name = unquote(tz_name)
+    try:
+        tz = pytz.timezone(tz_name)
+    except pytz.UnknownTimeZoneError as exc:
+        raise exceptions.BadRequest("Invalid timezone.", context = { "tz": tz_name }) from exc
+    
     hostname = hostname.lower()
     if not is_valid_hostname(hostname):
         raise exceptions.BadRequest(f"Invalid FQDN hostname.", context = { "hostname": hostname })
     if not filter_hostname(hostname):
         raise exceptions.BadRequest("Hostname isn't allowed. Only *.edu and *.instructure.com are allowed. If your school doesn't use these two, create a GitHub issue to allow it.", context = { "hostname": hostname })
+    
     if ext != 'ics':
         raise exceptions.BadRequest("Only .ics files are allowed. Make sure your URL ends with .ics.", context = { "file": file, "ext": ext })
 
@@ -102,6 +112,11 @@ async def calendar(request, filt: str, hostname: str, file: str, ext: str):
     for event in calendar.walk('VEVENT'):
         if not event_filter(event):
             calendar.subcomponents.remove(event)
+            continue
+        if CALENDAR_FILTERS['assignments'](event):
+            start_time = event.get('DTSTART')
+            if start_time is not None and not event.has_key('DTEND'):
+                event['DTSTART'] = icalendar.vDDDTypes(get_due_date(start_time, tz))
 
     return response.raw(calendar.to_ical(), content_type = 'text/calendar; charset=utf-8')
 

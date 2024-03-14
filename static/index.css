@@ -628,12 +628,12 @@ video {
   margin-top: 0.5rem;
 }
 
-.mt-4 {
-  margin-top: 1rem;
-}
-
 .mt-auto {
   margin-top: auto;
+}
+
+.mt-4 {
+  margin-top: 1rem;
 }
 
 .block {
@@ -698,6 +698,10 @@ video {
 
 .items-center {
   align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
 }
 
 .justify-items-center {

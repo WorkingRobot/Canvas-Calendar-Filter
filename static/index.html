@@ -8,7 +8,11 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="/index.css">
 
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.min.js'></script>
+
     <script defer>
+        var timezone = jstz.determine().name();
+
         document.addEventListener("DOMContentLoaded", () => {
             const calendarUrl = document.getElementById('calendar-url');
             const genUrl = document.getElementById('gen-url');
@@ -28,7 +32,7 @@
                 const url = calendarUrl.value;
                 const filt = document.querySelector('input[name="filter-type"]:checked').value;
                 const urlObj = new URL(url);
-                const newUrl = `${window.location.origin}/feeds/${filt}/${urlObj.hostname}/${urlObj.pathname.split('/').pop()}`;
+                const newUrl = `${window.location.origin}/feeds/${filt}/${encodeURIComponent(timezone)}/${urlObj.hostname}/${urlObj.pathname.split('/').pop()}`;
                 genUrl.value = newUrl;
                 genUrlContainer.classList.remove('hidden');
             });
