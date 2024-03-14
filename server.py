@@ -116,7 +116,7 @@ async def calendar(request, filt: str, tz_name: str, hostname: str, file: str, e
         if CALENDAR_FILTERS['assignments'](event):
             start_time = event.get('DTSTART')
             if start_time is not None and not event.has_key('DTEND'):
-                event['DTSTART'] = icalendar.vDDDTypes(get_due_date(start_time, tz))
+                event['DTSTART'] = event['DTEND'] = icalendar.vDDDTypes(get_due_date(start_time, tz))
 
     return response.raw(calendar.to_ical(), content_type = 'text/calendar; charset=utf-8')
 
