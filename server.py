@@ -67,8 +67,8 @@ def filter_not(filt):
 CALENDAR_FILTERS = {
     'calendar-events': filter_uid_startswith('event-calendar-event'),
     'assignments': filter_uid_startswith('event-assignment'),
-    'override-assignments': filter_uid_startswith('event-assignment-override'),
-    'turn-in-assignments': filter_intersect(filter_uid_startswith('event-assignment'), filter_not(filter_uid_startswith('event-assignment-override')))
+    'grouped-assignments': filter_uid_startswith('event-assignment-override'),
+    'class-assignments': filter_intersect(filter_uid_startswith('event-assignment'), filter_not(filter_uid_startswith('event-assignment-override')))
 }
 
 @app.get('/feeds/<filt:slug>/<tz_name:str>/<hostname:str>/<file=str:ext=ics>')
